@@ -4,19 +4,11 @@ plugins {
 }
 
 android {
-<<<<<<< HEAD
     namespace = "com.example.tictactoe"
     compileSdk = 34
 
     defaultConfig {
         applicationId = "com.example.tictactoe"
-=======
-    namespace = "com.example.hangman"
-    compileSdk = 34
-
-    defaultConfig {
-        applicationId = "com.example.hangman"
->>>>>>> a98e4070a709dc775de75c006f5b0e8ee4db28ba
         minSdk = 24
         targetSdk = 34
         versionCode = 1

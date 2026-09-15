@@ -4,17 +4,10 @@
     <application
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
-<<<<<<< HEAD
         android:label="Крестики-нолики"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.TicTacToe">
-=======
-        android:label="Виселица"
-        android:roundIcon="@mipmap/ic_launcher_round"
-        android:supportsRtl="true"
-        android:theme="@style/Theme.Hangman">
->>>>>>> a98e4070a709dc775de75c006f5b0e8ee4db28ba
 
         <activity
             android:name=".MainActivity"
