@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+<<<<<<< HEAD
+    <string name="app_name">Крестики-нолики</string>
+=======
+    <string name="app_name">Виселица</string>
+>>>>>>> a98e4070a709dc775de75c006f5b0e8ee4db28ba
+</resources>

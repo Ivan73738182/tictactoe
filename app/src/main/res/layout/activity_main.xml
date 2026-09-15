@@ -1,0 +1,125 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:background="#121212"
+<<<<<<< HEAD
+    android:padding="16dp">
+
+    <TextView
+        android:id="@+id/statusText"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Твой ход (X)"
+        android:textColor="#FFFFFF"
+        android:textSize="24sp"
+        android:textStyle="bold"
+        android:gravity="center"
+        android:layout_marginTop="16dp"
+        android:layout_marginBottom="8dp" />
+
+    <TextView
+        android:id="@+id/scoreText"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Победы: 0 | Ничьи: 0 | Поражения: 0"
+        android:textColor="#AAAAAA"
+        android:textSize="14sp"
+        android:gravity="center"
+        android:layout_marginBottom="24dp" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:orientation="vertical"
+        android:gravity="center">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:orientation="horizontal">
+            <Button android:id="@+id/btn0" style="@style/CellButton" />
+            <Button android:id="@+id/btn1" style="@style/CellButton" />
+            <Button android:id="@+id/btn2" style="@style/CellButton" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:orientation="horizontal">
+            <Button android:id="@+id/btn3" style="@style/CellButton" />
+            <Button android:id="@+id/btn4" style="@style/CellButton" />
+            <Button android:id="@+id/btn5" style="@style/CellButton" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:orientation="horizontal">
+            <Button android:id="@+id/btn6" style="@style/CellButton" />
+            <Button android:id="@+id/btn7" style="@style/CellButton" />
+            <Button android:id="@+id/btn8" style="@style/CellButton" />
+        </LinearLayout>
+    </LinearLayout>
+=======
+    android:padding="12dp">
+
+    <com.example.hangman.HangmanView
+        android:id="@+id/hangmanView"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="3" />
+
+    <TextView
+        android:id="@+id/wordText"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="_ _ _ _ _"
+        android:textColor="#FFFFFF"
+        android:textSize="28sp"
+        android:textStyle="bold"
+        android:gravity="center"
+        android:letterSpacing="0.15"
+        android:layout_marginTop="8dp"
+        android:layout_marginBottom="8dp" />
+
+    <TextView
+        android:id="@+id/infoText"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Ошибки: 0 / 6"
+        android:textColor="#AAAAAA"
+        android:textSize="16sp"
+        android:gravity="center"
+        android:layout_marginBottom="12dp" />
+
+    <LinearLayout
+        android:id="@+id/alphabetContainer"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:layout_marginBottom="12dp" />
+>>>>>>> a98e4070a709dc775de75c006f5b0e8ee4db28ba
+
+    <Button
+        android:id="@+id/newGameBtn"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="НОВАЯ ИГРА"
+        android:textSize="18sp"
+        android:textStyle="bold"
+        android:textColor="#FFFFFF"
+<<<<<<< HEAD
+        android:backgroundTint="#2196F3"
+        android:layout_marginTop="16dp" />
+=======
+        android:backgroundTint="#2196F3" />
+>>>>>>> a98e4070a709dc775de75c006f5b0e8ee4db28ba
+
+</LinearLayout>
