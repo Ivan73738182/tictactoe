@@ -14,18 +14,29 @@ class NamesActivity : AppCompatActivity() {
 
         val xInput = findViewById<EditText>(R.id.playerXInput)
         val oInput = findViewById<EditText>(R.id.playerOInput)
-        val startBtn = findViewById<Button>(R.id.startGameBtn)
+        val startTwoPlayersBtn = findViewById<Button>(R.id.startTwoPlayersBtn)
+        val startComputerBtn = findViewById<Button>(R.id.startComputerBtn)
 
-        startBtn.setOnClickListener {
+        startTwoPlayersBtn.setOnClickListener {
             val nameX = xInput.text.toString().trim().ifEmpty { "Игрок X" }
             val nameO = oInput.text.toString().trim().ifEmpty { "Игрок O" }
 
             val intent = Intent(this, MainActivity::class.java).apply {
                 putExtra("playerX", nameX)
                 putExtra("playerO", nameO)
+                putExtra("vsComputer", false)
             }
             startActivity(intent)
             finish()
+        }
+
+        startComputerBtn.setOnClickListener {
+            // Переходим на выбор X или O
+            val name = xInput.text.toString().trim().ifEmpty { "Вы" }
+            val intent = Intent(this, ComputerSetupActivity::class.java).apply {
+                putExtra("playerName", name)
+            }
+            startActivity(intent)
         }
     }
 }

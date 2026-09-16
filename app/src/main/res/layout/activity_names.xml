@@ -20,11 +20,12 @@
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Введите имена игроков"
+        android:text="Игра на двоих"
         android:textColor="#AAAAAA"
         android:textSize="16sp"
-        android:layout_marginBottom="40dp" />
+        android:layout_marginBottom="32dp" />
 
+    <!-- Игрок X -->
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -58,12 +59,13 @@
             android:maxLength="15" />
     </LinearLayout>
 
+    <!-- Игрок O -->
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
         android:gravity="center_vertical"
-        android:layout_marginBottom="32dp">
+        android:layout_marginBottom="24dp">
 
         <TextView
             android:layout_width="48dp"
@@ -91,15 +93,38 @@
             android:maxLength="15" />
     </LinearLayout>
 
+    <!-- Кнопка: играть на двоих -->
     <Button
-        android:id="@+id/startGameBtn"
+        android:id="@+id/startTwoPlayersBtn"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="НАЧАТЬ ИГРУ"
-        android:textSize="22sp"
+        android:textSize="20sp"
         android:textStyle="bold"
         android:textColor="#FFFFFF"
         android:backgroundTint="#2196F3"
-        android:padding="16dp" />
+        android:padding="14dp" />
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="— или —"
+        android:textColor="#666666"
+        android:textSize="14sp"
+        android:gravity="center"
+        android:layout_marginTop="16dp"
+        android:layout_marginBottom="16dp" />
+
+    <!-- Кнопка: играть с компьютером -->
+    <Button
+        android:id="@+id/startComputerBtn"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="ИГРАТЬ С КОМПЬЮТЕРОМ"
+        android:textSize="18sp"
+        android:textStyle="bold"
+        android:textColor="#FFFFFF"
+        android:backgroundTint="#00BCD4"
+        android:padding="14dp" />
 
 </LinearLayout>

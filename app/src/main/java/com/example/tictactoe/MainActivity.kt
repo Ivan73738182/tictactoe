@@ -38,6 +38,7 @@ class MainActivity : AppCompatActivity() {
         playerXName = intent.getStringExtra("playerX") ?: "Игрок X"
         playerOName = intent.getStringExtra("playerO") ?: "Игрок O"
         originalPlayerOName = playerOName
+        vsComputer = intent.getBooleanExtra("vsComputer", false)
 
         playerXNameView = findViewById(R.id.playerXName)
         playerONameView = findViewById(R.id.playerOName)
@@ -86,7 +87,8 @@ class MainActivity : AppCompatActivity() {
     private fun startNewGame() {
         board.fill(' ')
         gameOver = false
-        currentPlayer = if (Math.random() < 0.5) 'X' else 'O'
+        // Рандом первого хода только в режиме "на двоих"
+        currentPlayer = if (vsComputer) 'X' else if (Math.random() < 0.5) 'X' else 'O'
         buttons.forEach { btn ->
             btn.text = ""
             btn.isEnabled = true
@@ -95,13 +97,14 @@ class MainActivity : AppCompatActivity() {
         updateStatus()
         updateScores()
 
-        if (vsComputer && currentPlayer == 'O') {
+        // Если компьютер играет за X (ты за O) — компьютер ходит первым
+        if (vsComputer && playerXName == "Компьютер") {
             buttons.forEach { it.isEnabled = false }
             buttons[0].postDelayed({
                 val move = findBestMove()
-                if (move >= 0 && !gameOver) makeMove(move, 'O')
+                if (move >= 0 && !gameOver) makeMove(move, 'X')
                 if (!gameOver) {
-                    currentPlayer = 'X'
+                    currentPlayer = 'O'
                     buttons.forEachIndexed { i, b -> b.isEnabled = board[i] == ' ' }
                     updateStatus()
                 }
@@ -112,20 +115,27 @@ class MainActivity : AppCompatActivity() {
     private fun onCellClick(index: Int) {
         if (gameOver) return
         if (board[index] != ' ') return
-        if (vsComputer && currentPlayer != 'X') return
+
+        // Блокируем клик, если сейчас ход компьютера
+        if (vsComputer) {
+            val isComputerTurn = (currentPlayer == 'X' && playerXName == "Компьютер") ||
+                                 (currentPlayer == 'O' && playerOName == "Компьютер")
+            if (isComputerTurn) return
+        }
 
         makeMove(index, currentPlayer)
         if (gameOver) return
 
         if (vsComputer) {
-            currentPlayer = 'O'
+            // Передаём ход компьютеру
+            currentPlayer = if (currentPlayer == 'X') 'O' else 'X'
             updateStatus()
             buttons.forEach { it.isEnabled = false }
             buttons[0].postDelayed({
-                val move = findBestMove()
-                if (move >= 0 && !gameOver) makeMove(move, 'O')
+                val move = findBestMoveForComputer()
+                if (move >= 0 && !gameOver) makeMove(move, currentPlayer)
                 if (!gameOver) {
-                    currentPlayer = 'X'
+                    currentPlayer = if (currentPlayer == 'X') 'O' else 'X'
                     buttons.forEachIndexed { i, b -> b.isEnabled = board[i] == ' ' }
                     updateStatus()
                 }
@@ -134,6 +144,36 @@ class MainActivity : AppCompatActivity() {
             currentPlayer = if (currentPlayer == 'X') 'O' else 'X'
             updateStatus()
         }
+    }
+
+    private fun findBestMoveForComputer(): Int {
+        val computerChar = if (playerXName == "Компьютер") 'X' else 'O'
+        val playerChar = if (computerChar == 'X') 'O' else 'X'
+
+        // 1. Победный ход
+        for (i in 0..8) {
+            if (board[i] == ' ') {
+                board[i] = computerChar
+                if (checkWin(computerChar)) { board[i] = ' '; return i }
+                board[i] = ' '
+            }
+        }
+        // 2. Блокировать игрока
+        for (i in 0..8) {
+            if (board[i] == ' ') {
+                board[i] = playerChar
+                if (checkWin(playerChar)) { board[i] = ' '; return i }
+                board[i] = ' '
+            }
+        }
+        // 3. Центр
+        if (board[4] == ' ') return 4
+        // 4. Углы
+        val corners = listOf(0, 2, 6, 8).filter { board[it] == ' ' }
+        if (corners.isNotEmpty()) return corners.random()
+        // 5. Любая
+        val free = (0..8).filter { board[it] == ' ' }
+        return if (free.isEmpty()) -1 else free.random()
     }
 
     private fun makeMove(index: Int, player: Char) {
@@ -167,28 +207,6 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    private fun findBestMove(): Int {
-        for (i in 0..8) {
-            if (board[i] == ' ') {
-                board[i] = 'O'
-                if (checkWin('O')) { board[i] = ' '; return i }
-                board[i] = ' '
-            }
-        }
-        for (i in 0..8) {
-            if (board[i] == ' ') {
-                board[i] = 'X'
-                if (checkWin('X')) { board[i] = ' '; return i }
-                board[i] = ' '
-            }
-        }
-        if (board[4] == ' ') return 4
-        val corners = listOf(0, 2, 6, 8).filter { board[it] == ' ' }
-        if (corners.isNotEmpty()) return corners.random()
-        val free = (0..8).filter { board[it] == ' ' }
-        return if (free.isEmpty()) -1 else free.random()
-    }
-
     private fun checkWin(player: Char): Boolean = checkWinLine(player) != null
 
     private fun checkWinLine(player: Char): IntArray? {
@@ -216,7 +234,9 @@ class MainActivity : AppCompatActivity() {
     private fun updateStatus() {
         statusText.text = when {
             vsComputer -> {
-                if (currentPlayer == 'X') "Ход $playerXName" else "Ход компьютера..."
+                val isComputer = (currentPlayer == 'X' && playerXName == "Компьютер") ||
+                                 (currentPlayer == 'O' && playerOName == "Компьютер")
+                if (isComputer) "Ход компьютера..." else "Ход $playerXName" 
             }
             else -> {
                 if (currentPlayer == 'X') "Ход $playerXName" else "Ход $playerOName"
