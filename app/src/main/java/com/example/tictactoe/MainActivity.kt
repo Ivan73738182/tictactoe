@@ -214,10 +214,13 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun updateStatus() {
-        statusText.text = if (vsComputer) {
-            if (currentPlayer == 'X') "$playerXName, ваш ход" else "Ход компьютера..."
-        } else {
-            if (currentPlayer == 'X') "Ход игрока X" else "Ход игрока O"
+        statusText.text = when {
+            vsComputer -> {
+                if (currentPlayer == 'X') "Ход $playerXName" else "Ход компьютера..."
+            }
+            else -> {
+                if (currentPlayer == 'X') "Ход $playerXName" else "Ход $playerOName"
+            }
         }
     }
 
