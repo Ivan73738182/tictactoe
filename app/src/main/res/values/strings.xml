@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">Крестики-нолики</string>
+    <string name="app_name">Крестики</string>
     <string name="title">Крестики-нолики</string>
     <string name="enter_names">ВВЕДИТЕ ИМЕНА ИГРОКОВ</string>
     <string name="player_x_hint">Имя игрока X</string>
