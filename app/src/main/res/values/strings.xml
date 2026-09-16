@@ -1,4 +1,22 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">Крестики-нолики</string>
+    <string name="title">Крестики-нолики</string>
+    <string name="enter_names">ВВЕДИТЕ ИМЕНА ИГРОКОВ</string>
+    <string name="player_x_hint">Имя игрока X</string>
+    <string name="player_o_hint">Имя игрока O</string>
+    <string name="start_game">НАЧАТЬ ИГРУ</string>
+    <string name="new_game">НОВАЯ ИГРА</string>
+    <string name="change_mode">СМЕНИТЬ РЕЖИМ</string>
+    <string name="play_again">ИГРАТЬ СНОВА</string>
+    <string name="mode_two_players">На двоих</string>
+    <string name="mode_vs_computer">С компьютером</string>
+    <string name="player_x_default">Игрок X</string>
+    <string name="player_o_default">Игрок O</string>
+    <string name="computer">Компьютер</string>
+    <string name="menu_share">Поделиться игрой</string>
+    <string name="menu_other_apps">Другие приложения</string>
+    <string name="menu_about">О приложении</string>
+    <string name="win_message">Победил(а) %1$s!</string>
+    <string name="draw_message">Ничья!</string>
 </resources>

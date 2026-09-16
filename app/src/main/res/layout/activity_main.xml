@@ -7,27 +7,83 @@
     android:background="#121212"
     android:padding="16dp">
 
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_marginBottom="16dp">
+
+        <LinearLayout
+            android:id="@+id/playerXPanel"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:orientation="vertical"
+            android:gravity="center"
+            android:padding="12dp"
+            android:background="#212121"
+            android:layout_marginEnd="8dp">
+
+            <TextView
+                android:id="@+id/playerXName"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Игрок X"
+                android:textColor="#FFFFFF"
+                android:textSize="16sp"
+                android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/playerXScore"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="0"
+                android:textColor="#2196F3"
+                android:textSize="32sp"
+                android:textStyle="bold" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/playerOPanel"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:orientation="vertical"
+            android:gravity="center"
+            android:padding="12dp"
+            android:background="#212121"
+            android:layout_marginStart="8dp">
+
+            <TextView
+                android:id="@+id/playerOName"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Игрок O"
+                android:textColor="#FFFFFF"
+                android:textSize="16sp"
+                android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/playerOScore"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="0"
+                android:textColor="#00BCD4"
+                android:textSize="32sp"
+                android:textStyle="bold" />
+        </LinearLayout>
+    </LinearLayout>
+
     <TextView
         android:id="@+id/statusText"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Твой ход (X)"
+        android:text="Ход игрока X"
         android:textColor="#FFFFFF"
-        android:textSize="24sp"
+        android:textSize="22sp"
         android:textStyle="bold"
         android:gravity="center"
-        android:layout_marginTop="16dp"
-        android:layout_marginBottom="8dp" />
-
-    <TextView
-        android:id="@+id/scoreText"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="Победы: 0 | Ничьи: 0 | Поражения: 0"
-        android:textColor="#AAAAAA"
-        android:textSize="14sp"
-        android:gravity="center"
-        android:layout_marginBottom="24dp" />
+        android:layout_marginBottom="16dp" />
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -76,5 +132,16 @@
         android:textColor="#FFFFFF"
         android:backgroundTint="#2196F3"
         android:layout_marginTop="16dp" />
+
+    <Button
+        android:id="@+id/changeModeBtn"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="СМЕНИТЬ РЕЖИМ"
+        android:textSize="16sp"
+        android:textStyle="bold"
+        android:textColor="#AAAAAA"
+        android:backgroundTint="#212121"
+        android:layout_marginTop="8dp" />
 
 </LinearLayout>

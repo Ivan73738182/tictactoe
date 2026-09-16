@@ -9,14 +9,20 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.TicTacToe">
 
+        <!-- Стартовый экран — ввод имён -->
         <activity
-            android:name=".MainActivity"
+            android:name=".NamesActivity"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
+        <!-- Экран игры -->
+        <activity
+            android:name=".MainActivity"
+            android:exported="false" />
 
     </application>
 </manifest>
