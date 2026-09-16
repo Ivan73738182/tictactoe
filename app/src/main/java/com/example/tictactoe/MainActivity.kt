@@ -15,6 +15,7 @@ class MainActivity : AppCompatActivity() {
 
     private var playerXName = "Игрок X"
     private var playerOName = "Игрок O"
+    private var originalPlayerOName = "Игрок O"
     private var vsComputer = false
 
     private var xWins = 0
@@ -36,6 +37,7 @@ class MainActivity : AppCompatActivity() {
 
         playerXName = intent.getStringExtra("playerX") ?: "Игрок X"
         playerOName = intent.getStringExtra("playerO") ?: "Игрок O"
+        originalPlayerOName = playerOName
 
         playerXNameView = findViewById(R.id.playerXName)
         playerONameView = findViewById(R.id.playerOName)
@@ -72,8 +74,8 @@ class MainActivity : AppCompatActivity() {
                 vsComputer = (which == 1)
                 if (vsComputer) {
                     playerOName = "Компьютер"
-                } else if (playerOName == "Компьютер") {
-                    playerOName = "Игрок O"
+                } else {
+                    playerOName = originalPlayerOName
                 }
                 playerONameView.text = playerOName
                 startNewGame()
@@ -84,7 +86,7 @@ class MainActivity : AppCompatActivity() {
     private fun startNewGame() {
         board.fill(' ')
         gameOver = false
-        currentPlayer = 'X'
+        currentPlayer = if (Math.random() < 0.5) 'X' else 'O'
         buttons.forEach { btn ->
             btn.text = ""
             btn.isEnabled = true
@@ -92,6 +94,19 @@ class MainActivity : AppCompatActivity() {
         }
         updateStatus()
         updateScores()
+
+        if (vsComputer && currentPlayer == 'O') {
+            buttons.forEach { it.isEnabled = false }
+            buttons[0].postDelayed({
+                val move = findBestMove()
+                if (move >= 0 && !gameOver) makeMove(move, 'O')
+                if (!gameOver) {
+                    currentPlayer = 'X'
+                    buttons.forEachIndexed { i, b -> b.isEnabled = board[i] == ' ' }
+                    updateStatus()
+                }
+            }, 600)
+        }
     }
 
     private fun onCellClick(index: Int) {
@@ -100,7 +115,6 @@ class MainActivity : AppCompatActivity() {
         if (vsComputer && currentPlayer != 'X') return
 
         makeMove(index, currentPlayer)
-
         if (gameOver) return
 
         if (vsComputer) {
@@ -109,9 +123,7 @@ class MainActivity : AppCompatActivity() {
             buttons.forEach { it.isEnabled = false }
             buttons[0].postDelayed({
                 val move = findBestMove()
-                if (move >= 0 && !gameOver) {
-                    makeMove(move, 'O')
-                }
+                if (move >= 0 && !gameOver) makeMove(move, 'O')
                 if (!gameOver) {
                     currentPlayer = 'X'
                     buttons.forEachIndexed { i, b -> b.isEnabled = board[i] == ' ' }
