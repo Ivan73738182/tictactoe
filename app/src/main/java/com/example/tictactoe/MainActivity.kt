@@ -1,4 +1,4 @@
-package com.example.tictactoe
+package com.ivangames.tictactoe
 
 import android.app.AlertDialog
 import android.content.Intent

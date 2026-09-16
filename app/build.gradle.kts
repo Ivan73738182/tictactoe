@@ -14,11 +14,11 @@ if (keystorePropsFile.exists()) {
 }
 
 android {
-    namespace = "com.example.tictactoe"
+    namespace = "com.ivangames.tictactoe"
     compileSdk = 34
 
     defaultConfig {
-        applicationId = "com.example.tictactoe"
+        applicationId = "com.ivangames.tictactoe"
         minSdk = 24
         targetSdk = 34
         versionCode = 1
