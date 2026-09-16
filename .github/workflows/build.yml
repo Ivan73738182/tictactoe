@@ -27,6 +27,15 @@ jobs:
           echo "keyAlias=${{ secrets.KEY_ALIAS }}" >> keystore.properties
           echo "keyPassword=${{ secrets.KEY_PASSWORD }}" >> keystore.properties
 
+      - name: Debug keystore
+        run: |
+          echo "=== Size of keystore ==="
+          ls -la release.keystore
+          echo "=== keystore.properties ==="
+          cat keystore.properties
+          echo "=== Verify keystore ==="
+          keytool -list -keystore release.keystore -storepass "${{ secrets.KEYSTORE_PASSWORD }}" || echo "FAILED TO READ KEYSTORE"
+
       - name: Accept Android SDK licenses
         run: yes | $ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager --licenses || true
 
