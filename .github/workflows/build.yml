@@ -19,9 +19,14 @@ jobs:
           distribution: 'temurin'
           java-version: '17'
 
-      - name: Decode keystore
+      - name: Create keystore
         run: |
-          echo "${{ secrets.KEYSTORE_BASE64_PART1 }}${{ secrets.KEYSTORE_BASE64_PART2 }}" | tr '-_' '+/' | base64 -d > release.keystore
+          keytool -genkey -v -keystore release.keystore \
+            -alias "${{ secrets.KEY_ALIAS }}" \
+            -keyalg RSA -keysize 2048 -validity 10000 \
+            -storepass "${{ secrets.KEYSTORE_PASSWORD }}" \
+            -keypass "${{ secrets.KEY_PASSWORD }}" \
+            -dname "${{ secrets.KEY_DNAME }}"
           echo "storeFile=release.keystore" > keystore.properties
           echo "storePassword=${{ secrets.KEYSTORE_PASSWORD }}" >> keystore.properties
           echo "keyAlias=${{ secrets.KEY_ALIAS }}" >> keystore.properties
