@@ -1,9 +1,11 @@
 package com.example.tictactoe
 
 import android.app.AlertDialog
+import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.widget.Button
+import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 
@@ -59,7 +61,7 @@ class MainActivity : AppCompatActivity() {
         }
 
         newGameBtn.setOnClickListener { startNewGame() }
-        changeModeBtn.setOnClickListener { changeMode() }
+        changeModeBtn.setOnClickListener { showModeDialog() }
 
         playerXNameView.text = playerXName
         playerONameView.text = playerOName
@@ -67,28 +69,41 @@ class MainActivity : AppCompatActivity() {
         startNewGame()
     }
 
-    private fun changeMode() {
-        val options = arrayOf("На двоих", "С компьютером")
-        AlertDialog.Builder(this)
-            .setTitle("Режим игры")
-            .setItems(options) { _, which ->
-                vsComputer = (which == 1)
-                if (vsComputer) {
-                    playerOName = "Компьютер"
-                } else {
-                    playerOName = originalPlayerOName
-                }
-                playerONameView.text = playerOName
-                startNewGame()
-            }
-            .show()
+    private fun showModeDialog() {
+        val view = LayoutInflater.from(this).inflate(R.layout.dialog_mode, null)
+        val dialog = AlertDialog.Builder(this)
+            .setView(view)
+            .setCancelable(true)
+            .create()
+
+        view.findViewById<LinearLayout>(R.id.modeTwoPlayers).setOnClickListener {
+            dialog.dismiss()
+            // Возврат на экран имён (на двоих)
+            val intent = Intent(this, NamesActivity::class.java)
+            intent.flags = Intent.FLAG_ACTIVITY_CLEAR_TOP
+            startActivity(intent)
+            finish()
+        }
+
+        view.findViewById<LinearLayout>(R.id.modeVsComputer).setOnClickListener {
+            dialog.dismiss()
+            // Идём на выбор X/O
+            val intent = Intent(this, ComputerSetupActivity::class.java)
+            startActivity(intent)
+            finish()
+        }
+
+        view.findViewById<Button>(R.id.cancelBtn).setOnClickListener {
+            dialog.dismiss()
+        }
+
+        dialog.show()
     }
 
     private fun startNewGame() {
         board.fill(' ')
         gameOver = false
-        // Рандом первого хода только в режиме "на двоих"
-        currentPlayer = if (vsComputer) 'X' else if (Math.random() < 0.5) 'X' else 'O'
+        currentPlayer = 'X'
         buttons.forEach { btn ->
             btn.text = ""
             btn.isEnabled = true
@@ -97,11 +112,11 @@ class MainActivity : AppCompatActivity() {
         updateStatus()
         updateScores()
 
-        // Если компьютер играет за X (ты за O) — компьютер ходит первым
+        // Если компьютер играет за X — он ходит первым
         if (vsComputer && playerXName == "Компьютер") {
             buttons.forEach { it.isEnabled = false }
             buttons[0].postDelayed({
-                val move = findBestMove()
+                val move = findBestMoveForComputer()
                 if (move >= 0 && !gameOver) makeMove(move, 'X')
                 if (!gameOver) {
                     currentPlayer = 'O'
@@ -116,7 +131,6 @@ class MainActivity : AppCompatActivity() {
         if (gameOver) return
         if (board[index] != ' ') return
 
-        // Блокируем клик, если сейчас ход компьютера
         if (vsComputer) {
             val isComputerTurn = (currentPlayer == 'X' && playerXName == "Компьютер") ||
                                  (currentPlayer == 'O' && playerOName == "Компьютер")
@@ -127,7 +141,6 @@ class MainActivity : AppCompatActivity() {
         if (gameOver) return
 
         if (vsComputer) {
-            // Передаём ход компьютеру
             currentPlayer = if (currentPlayer == 'X') 'O' else 'X'
             updateStatus()
             buttons.forEach { it.isEnabled = false }
@@ -150,7 +163,6 @@ class MainActivity : AppCompatActivity() {
         val computerChar = if (playerXName == "Компьютер") 'X' else 'O'
         val playerChar = if (computerChar == 'X') 'O' else 'X'
 
-        // 1. Победный ход
         for (i in 0..8) {
             if (board[i] == ' ') {
                 board[i] = computerChar
@@ -158,7 +170,6 @@ class MainActivity : AppCompatActivity() {
                 board[i] = ' '
             }
         }
-        // 2. Блокировать игрока
         for (i in 0..8) {
             if (board[i] == ' ') {
                 board[i] = playerChar
@@ -166,12 +177,9 @@ class MainActivity : AppCompatActivity() {
                 board[i] = ' '
             }
         }
-        // 3. Центр
         if (board[4] == ' ') return 4
-        // 4. Углы
         val corners = listOf(0, 2, 6, 8).filter { board[it] == ' ' }
         if (corners.isNotEmpty()) return corners.random()
-        // 5. Любая
         val free = (0..8).filter { board[it] == ' ' }
         return if (free.isEmpty()) -1 else free.random()
     }
@@ -236,7 +244,7 @@ class MainActivity : AppCompatActivity() {
             vsComputer -> {
                 val isComputer = (currentPlayer == 'X' && playerXName == "Компьютер") ||
                                  (currentPlayer == 'O' && playerOName == "Компьютер")
-                if (isComputer) "Ход компьютера..." else "Ход $playerXName" 
+                if (isComputer) "Ход компьютера..." else "Ход $playerXName"
             }
             else -> {
                 if (currentPlayer == 'X') "Ход $playerXName" else "Ход $playerOName"

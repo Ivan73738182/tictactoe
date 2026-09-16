@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:background="#121212"
+    android:padding="24dp"
+    android:gravity="center">
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Как тебя зовут?"
+        android:textColor="#2196F3"
+        android:textSize="32sp"
+        android:textStyle="bold"
+        android:layout_marginBottom="8dp" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Введи имя или пропусти"
+        android:textColor="#AAAAAA"
+        android:textSize="16sp"
+        android:layout_marginBottom="40dp" />
+
+    <EditText
+        android:id="@+id/nameInput"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="Твоё имя"
+        android:textColor="#FFFFFF"
+        android:textColorHint="#666666"
+        android:textSize="20sp"
+        android:padding="16dp"
+        android:backgroundTint="#2196F3"
+        android:inputType="text"
+        android:maxLength="15"
+        android:layout_marginBottom="24dp" />
+
+    <Button
+        android:id="@+id/startBtn"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="НАЧАТЬ"
+        android:textSize="20sp"
+        android:textStyle="bold"
+        android:textColor="#FFFFFF"
+        android:backgroundTint="#2196F3"
+        android:padding="14dp"
+        android:layout_marginBottom="12dp" />
+
+    <Button
+        android:id="@+id/skipBtn"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="ПРОПУСТИТЬ"
+        android:textSize="16sp"
+        android:textStyle="bold"
+        android:textColor="#AAAAAA"
+        android:backgroundTint="#212121"
+        android:padding="12dp" />
+
+</LinearLayout>

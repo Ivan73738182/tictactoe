@@ -12,31 +12,26 @@ class ComputerSetupActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_computer_setup)
 
-        val playerName = intent.getStringExtra("playerName") ?: "Вы"
-
         val playAsXBtn = findViewById<LinearLayout>(R.id.playAsXBtn)
         val playAsOBtn = findViewById<LinearLayout>(R.id.playAsOBtn)
         val backBtn = findViewById<Button>(R.id.backBtn)
 
         playAsXBtn.setOnClickListener {
-            startGame(playerName, "Компьютер")
+            val intent = Intent(this, EnterNameActivity::class.java).apply {
+                putExtra("playerSide", "X")
+            }
+            startActivity(intent)
         }
 
         playAsOBtn.setOnClickListener {
-            startGame("Компьютер", playerName)
+            val intent = Intent(this, EnterNameActivity::class.java).apply {
+                putExtra("playerSide", "O")
+            }
+            startActivity(intent)
         }
 
         backBtn.setOnClickListener {
             finish()
         }
-    }
-
-    private fun startGame(xName: String, oName: String) {
-        val intent = Intent(this, MainActivity::class.java).apply {
-            putExtra("playerX", xName)
-            putExtra("playerO", oName)
-            putExtra("vsComputer", true)
-        }
-        startActivity(intent)
     }
 }
