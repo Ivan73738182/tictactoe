@@ -32,15 +32,11 @@ class NamesActivity : AppCompatActivity() {
 
         applyTheme()
 
-        themeBtn.setOnClickListener {
-            themeMode = when (themeMode) {
-                "dark" -> "pink"
-                "pink" -> "light"
-                else -> "dark"
-            }
-            prefs.edit().putString("themeMode", themeMode).apply()
-            applyTheme()
-        }
+themeBtn.setOnClickListener {
+    themeMode = if (themeMode == "dark") "pink" else "dark"
+    prefs.edit().putString("themeMode", themeMode).apply()
+    applyTheme()
+}
 
         startTwoPlayersBtn.setOnClickListener {
             val nameX = xInput.text.toString().trim().ifEmpty { "Игрок X" }

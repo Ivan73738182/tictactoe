@@ -133,11 +133,7 @@ homeBtn.setOnClickListener {
     }
 
 private fun toggleTheme() {
-    themeMode = when (themeMode) {
-        "dark" -> "pink"
-        "pink" -> "light"
-        else -> "dark"
-    }
+    themeMode = if (themeMode == "dark") "pink" else "dark"
     prefs.edit().putString("themeMode", themeMode).apply()
     applyTheme()
 }
