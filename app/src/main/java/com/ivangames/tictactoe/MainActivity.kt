@@ -50,7 +50,7 @@ class MainActivity : AppCompatActivity() {
     private lateinit var boardContainer: LinearLayout
     private lateinit var rootLayout: LinearLayout
     private lateinit var prefs: android.content.SharedPreferences
-    private var darkTheme = true
+    private var themeMode = "dark"
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -65,7 +65,7 @@ class MainActivity : AppCompatActivity() {
         difficulty = intent.getStringExtra("difficulty") ?: "medium"
         boardSize = intent.getIntExtra("boardSize", 3)
         winLength = if (boardSize == 3) 3 else 4
-        darkTheme = prefs.getBoolean("darkTheme", true)
+        themeMode = prefs.getString("themeMode", "dark") ?: "dark"
 
         playerXNameView = findViewById(R.id.playerXName)
         playerONameView = findViewById(R.id.playerOName)
@@ -75,7 +75,8 @@ class MainActivity : AppCompatActivity() {
         timerText = findViewById(R.id.timerText)
         newGameBtn = findViewById(R.id.newGameBtn)
         changeModeBtn = findViewById(R.id.changeModeBtn)
-        themeBtn = findViewById(R.id.themeBtn)
+themeBtn = findViewById(R.id.themeBtn)      
+  val homeBtn = findViewById<Button>(R.id.homeBtn)
         boardContainer = findViewById(R.id.boardContainer)
         rootLayout = findViewById(R.id.rootLayout)
 
@@ -87,6 +88,12 @@ class MainActivity : AppCompatActivity() {
         newGameBtn.setOnClickListener { startNewGame() }
         changeModeBtn.setOnClickListener { showModeDialog() }
         themeBtn.setOnClickListener { toggleTheme() }
+homeBtn.setOnClickListener {
+    val intent = Intent(this, NamesActivity::class.java)
+    intent.flags = Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_NEW_TASK
+    startActivity(intent)
+    finish()
+}
 
         applyTheme()
         startNewGame()
@@ -125,20 +132,32 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    private fun toggleTheme() {
-        darkTheme = !darkTheme
-        prefs.edit().putBoolean("darkTheme", darkTheme).apply()
-        applyTheme()
+private fun toggleTheme() {
+    themeMode = when (themeMode) {
+        "dark" -> "pink"
+        "pink" -> "light"
+        else -> "dark"
     }
+    prefs.edit().putString("themeMode", themeMode).apply()
+    applyTheme()
+}
 
-    private fun applyTheme() {
-        val textColor = if (darkTheme) Color.WHITE else Color.BLACK
-        val subColor = if (darkTheme) 0xFFAAAAAA.toInt() else 0xFF666666.toInt()
-        statusText.setTextColor(textColor)
-        timerText.setTextColor(subColor)
-        themeBtn.text = if (darkTheme) "🌙" else "☀"
+private fun applyTheme() {
+    when (themeMode) {
+        "pink" -> {
+            rootLayout.setBackgroundResource(R.drawable.bg_pink)
+            statusText.setTextColor(Color.WHITE)
+            timerText.setTextColor(0xFFE1BEE7.toInt())
+            themeBtn.text = "💗"
+        }
+        else -> {
+            rootLayout.setBackgroundResource(R.drawable.bg_gradient)
+            statusText.setTextColor(Color.WHITE)
+            timerText.setTextColor(0xFFAAAAAA.toInt())
+            themeBtn.text = "🌙"
+        }
     }
-
+}
     private fun showModeDialog() {
         val view = LayoutInflater.from(this).inflate(R.layout.dialog_mode, null)
         val dialog = AlertDialog.Builder(this)
@@ -146,14 +165,13 @@ class MainActivity : AppCompatActivity() {
             .setCancelable(true)
             .create()
 
-        view.findViewById<LinearLayout>(R.id.modeTwoPlayers).setOnClickListener {
-            dialog.dismiss()
-            vsComputer = false
-            trainingMode = false
-            playerOName = originalPlayerOName
-            playerONameView.text = playerOName
-            startNewGame()
-        }
+view.findViewById<LinearLayout>(R.id.modeTwoPlayers).setOnClickListener {
+    dialog.dismiss()
+    val intent = Intent(this, NamesActivity::class.java)
+    intent.flags = Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_NEW_TASK
+    startActivity(intent)
+    finish()
+}
 
         view.findViewById<LinearLayout>(R.id.modeVsComputer).setOnClickListener {
             dialog.dismiss()
