@@ -13,6 +13,7 @@ class EnterNameActivity : AppCompatActivity() {
         setContentView(R.layout.activity_enter_name)
 
         val playerSide = intent.getStringExtra("playerSide") ?: "X"
+        val difficulty = intent.getStringExtra("difficulty") ?: "medium"
 
         val nameInput = findViewById<EditText>(R.id.nameInput)
         val startBtn = findViewById<Button>(R.id.startBtn)
@@ -20,15 +21,15 @@ class EnterNameActivity : AppCompatActivity() {
 
         startBtn.setOnClickListener {
             val name = nameInput.text.toString().trim().ifEmpty { "Вы" }
-            goToGame(name, playerSide)
+            goToGame(name, playerSide, difficulty)
         }
 
         skipBtn.setOnClickListener {
-            goToGame("Вы", playerSide)
+            goToGame("Вы", playerSide, difficulty)
         }
     }
 
-    private fun goToGame(name: String, playerSide: String) {
+    private fun goToGame(name: String, playerSide: String, difficulty: String) {
         val xName = if (playerSide == "X") name else "Компьютер"
         val oName = if (playerSide == "O") name else "Компьютер"
 
@@ -36,6 +37,7 @@ class EnterNameActivity : AppCompatActivity() {
             putExtra("playerX", xName)
             putExtra("playerO", oName)
             putExtra("vsComputer", true)
+            putExtra("difficulty", difficulty)
         }
         startActivity(intent)
         finish()

@@ -1,30 +1,35 @@
 package com.ivangames.tictactoe
 
 import android.app.AlertDialog
-import android.content.Intent
+import android.content.Context
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.widget.Button
 import android.widget.LinearLayout
 import android.widget.TextView
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 
 class MainActivity : AppCompatActivity() {
 
-    private val board = CharArray(9) { ' ' }
+    private var boardSize = 3
+    private var winLength = 3
+    private val board = mutableListOf<Char>()
     private var gameOver = false
     private var currentPlayer = 'X'
+    private var vsComputer = false
+    private var difficulty = "medium"
+    private var trainingMode = false
 
     private var playerXName = "Игрок X"
     private var playerOName = "Игрок O"
     private var originalPlayerOName = "Игрок O"
-    private var vsComputer = false
 
     private var xWins = 0
     private var oWins = 0
     private var draws = 0
 
-    private lateinit var buttons: List<Button>
+    private lateinit var buttons: MutableList<Button>
     private lateinit var statusText: TextView
     private lateinit var playerXNameView: TextView
     private lateinit var playerONameView: TextView
@@ -32,15 +37,22 @@ class MainActivity : AppCompatActivity() {
     private lateinit var playerOScoreView: TextView
     private lateinit var newGameBtn: Button
     private lateinit var changeModeBtn: Button
+    private lateinit var boardContainer: LinearLayout
+    private lateinit var prefs: android.content.SharedPreferences
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
+        prefs = getSharedPreferences("tips", Context.MODE_PRIVATE)
+
         playerXName = intent.getStringExtra("playerX") ?: "Игрок X"
         playerOName = intent.getStringExtra("playerO") ?: "Игрок O"
         originalPlayerOName = playerOName
         vsComputer = intent.getBooleanExtra("vsComputer", false)
+        difficulty = intent.getStringExtra("difficulty") ?: "medium"
+        boardSize = intent.getIntExtra("boardSize", 3)
+        winLength = if (boardSize == 3) 3 else 4
 
         playerXNameView = findViewById(R.id.playerXName)
         playerONameView = findViewById(R.id.playerOName)
@@ -49,139 +61,202 @@ class MainActivity : AppCompatActivity() {
         statusText = findViewById(R.id.statusText)
         newGameBtn = findViewById(R.id.newGameBtn)
         changeModeBtn = findViewById(R.id.changeModeBtn)
-
-        buttons = listOf(
-            findViewById(R.id.btn0), findViewById(R.id.btn1), findViewById(R.id.btn2),
-            findViewById(R.id.btn3), findViewById(R.id.btn4), findViewById(R.id.btn5),
-            findViewById(R.id.btn6), findViewById(R.id.btn7), findViewById(R.id.btn8)
-        )
-
-        buttons.forEachIndexed { index, button ->
-            button.setOnClickListener { onCellClick(index) }
-        }
-
-        newGameBtn.setOnClickListener { startNewGame() }
-        changeModeBtn.setOnClickListener { showModeDialog() }
+        boardContainer = findViewById(R.id.boardContainer)
 
         playerXNameView.text = playerXName
         playerONameView.text = playerOName
 
+        buildBoard()
+
+        newGameBtn.setOnClickListener { startNewGame() }
+        changeModeBtn.setOnClickListener { showModeDialog() }
+
         startNewGame()
     }
 
+    private fun buildBoard() {
+        boardContainer.removeAllViews()
+        buttons = mutableListOf()
+
+        for (row in 0 until boardSize) {
+            val rowLayout = LinearLayout(this).apply {
+                orientation = LinearLayout.HORIZONTAL
+                layoutParams = LinearLayout.LayoutParams(
+                    LinearLayout.LayoutParams.MATCH_PARENT, 0, 1f
+                )
+            }
+            for (col in 0 until boardSize) {
+                val idx = row * boardSize + col
+                val btn = Button(this).apply {
+                    text = ""
+                    textSize = if (boardSize == 3) 48f else 32f
+                    setTextColor(0xFFFFFFFF.toInt())
+                    backgroundTintList = android.content.res.ColorStateList.valueOf(0xFF2A2A3A.toInt())
+                    layoutParams = LinearLayout.LayoutParams(0, LinearLayout.LayoutParams.MATCH_PARENT, 1f).apply {
+                        setMargins(4, 4, 4, 4)
+                    }
+                    setOnClickListener { onCellClick(idx) }
+                }
+                rowLayout.addView(btn)
+                buttons.add(btn)
+            }
+            boardContainer.addView(rowLayout)
+        }
+    }
+
     private fun showModeDialog() {
-        val view = LayoutInflater.from(this).inflate(R.layout.dialog_mode, null)
-        val dialog = AlertDialog.Builder(this)
-            .setView(view)
-            .setCancelable(true)
-            .create()
-
-        view.findViewById<LinearLayout>(R.id.modeTwoPlayers).setOnClickListener {
-            dialog.dismiss()
-            // Возврат на экран имён (на двоих)
-            val intent = Intent(this, NamesActivity::class.java)
-            intent.flags = Intent.FLAG_ACTIVITY_CLEAR_TOP
-            startActivity(intent)
-            finish()
-        }
-
-        view.findViewById<LinearLayout>(R.id.modeVsComputer).setOnClickListener {
-            dialog.dismiss()
-            // Идём на выбор X/O
-            val intent = Intent(this, ComputerSetupActivity::class.java)
-            startActivity(intent)
-            finish()
-        }
-
-        view.findViewById<Button>(R.id.cancelBtn).setOnClickListener {
-            dialog.dismiss()
-        }
-
-        dialog.show()
+        val options = arrayOf("На двоих", "С компьютером", "Сбросить счёт")
+        AlertDialog.Builder(this)
+            .setTitle("Режим игры")
+            .setItems(options) { _, which ->
+                when (which) {
+                    0 -> {
+                        vsComputer = false
+                        trainingMode = false
+                        playerOName = originalPlayerOName
+                    }
+                    1 -> {
+                        vsComputer = true
+                        playerOName = "Компьютер"
+                    }
+                    2 -> {
+                        xWins = 0
+                        oWins = 0
+                        draws = 0
+                    }
+                }
+                playerONameView.text = playerOName
+                startNewGame()
+            }
+            .show()
     }
 
     private fun startNewGame() {
-        board.fill(' ')
+        board.clear()
+        repeat(boardSize * boardSize) { board.add(' ') }
         gameOver = false
         currentPlayer = 'X'
-        buttons.forEach { btn ->
-            btn.text = ""
-            btn.isEnabled = true
-            btn.backgroundTintList = android.content.res.ColorStateList.valueOf(0xFF212121.toInt())
+        buttons.forEach {
+            it.text = ""
+            it.isEnabled = true
+            it.backgroundTintList = android.content.res.ColorStateList.valueOf(0xFF2A2A3A.toInt())
         }
         updateStatus()
         updateScores()
-
-        // Если компьютер играет за X — он ходит первым
-        if (vsComputer && playerXName == "Компьютер") {
-            buttons.forEach { it.isEnabled = false }
-            buttons[0].postDelayed({
-                val move = findBestMoveForComputer()
-                if (move >= 0 && !gameOver) makeMove(move, 'X')
-                if (!gameOver) {
-                    currentPlayer = 'O'
-                    buttons.forEachIndexed { i, b -> b.isEnabled = board[i] == ' ' }
-                    updateStatus()
-                }
-            }, 600)
-        }
     }
 
     private fun onCellClick(index: Int) {
         if (gameOver) return
         if (board[index] != ' ') return
-
-        if (vsComputer) {
-            val isComputerTurn = (currentPlayer == 'X' && playerXName == "Компьютер") ||
-                                 (currentPlayer == 'O' && playerOName == "Компьютер")
-            if (isComputerTurn) return
-        }
+        if (vsComputer && currentPlayer == 'O') return
 
         makeMove(index, currentPlayer)
+
         if (gameOver) return
 
-        if (vsComputer) {
-            currentPlayer = if (currentPlayer == 'X') 'O' else 'X'
+        if (vsComputer && currentPlayer == 'X') {
+            currentPlayer = 'O'
             updateStatus()
             buttons.forEach { it.isEnabled = false }
-            buttons[0].postDelayed({
-                val move = findBestMoveForComputer()
-                if (move >= 0 && !gameOver) makeMove(move, currentPlayer)
-                if (!gameOver) {
-                    currentPlayer = if (currentPlayer == 'X') 'O' else 'X'
-                    buttons.forEachIndexed { i, b -> b.isEnabled = board[i] == ' ' }
-                    updateStatus()
-                }
-            }, 400)
+            buttons[0].postDelayed({ computerMove() }, 400)
         } else {
             currentPlayer = if (currentPlayer == 'X') 'O' else 'X'
             updateStatus()
         }
     }
 
-    private fun findBestMoveForComputer(): Int {
-        val computerChar = if (playerXName == "Компьютер") 'X' else 'O'
-        val playerChar = if (computerChar == 'X') 'O' else 'X'
+    private fun computerMove() {
+        if (gameOver) return
 
-        for (i in 0..8) {
-            if (board[i] == ' ') {
-                board[i] = computerChar
-                if (checkWin(computerChar)) { board[i] = ' '; return i }
-                board[i] = ' '
-            }
+        val move = when (difficulty) {
+            "easy" -> findRandomMove()
+            "hard" -> findBestMove('O', 'X')
+            else -> findMediumMove()
         }
-        for (i in 0..8) {
-            if (board[i] == ' ') {
-                board[i] = playerChar
-                if (checkWin(playerChar)) { board[i] = ' '; return i }
-                board[i] = ' '
-            }
+
+        if (move >= 0) makeMove(move, 'O')
+
+        if (!gameOver) {
+            currentPlayer = 'X'
+            buttons.forEachIndexed { i, b -> b.isEnabled = board[i] == ' ' }
+            updateStatus()
         }
-        if (board[4] == ' ') return 4
-        val corners = listOf(0, 2, 6, 8).filter { board[it] == ' ' }
-        if (corners.isNotEmpty()) return corners.random()
-        val free = (0..8).filter { board[it] == ' ' }
+    }
+
+    private fun findRandomMove(): Int {
+        val free = board.indices.filter { board[it] == ' ' }
         return if (free.isEmpty()) -1 else free.random()
+    }
+
+    private fun findMediumMove(): Int {
+        // Победный ход
+        for (i in board.indices) {
+            if (board[i] == ' ') {
+                board[i] = 'O'
+                if (checkWinAll('O')) {
+                    board[i] = ' '
+                    return i
+                }
+                board[i] = ' '
+            }
+        }
+        // Блок
+        for (i in board.indices) {
+            if (board[i] == ' ') {
+                board[i] = 'X'
+                if (checkWinAll('X')) {
+                    board[i] = ' '
+                    return i
+                }
+                board[i] = ' '
+            }
+        }
+        return findRandomMove()
+    }
+
+    private fun findBestMove(me: Char, enemy: Char): Int {
+        var bestScore = Int.MIN_VALUE
+        var bestMove = -1
+        for (i in board.indices) {
+            if (board[i] == ' ') {
+                board[i] = me
+                val score = minimax(0, false, me, enemy)
+                board[i] = ' '
+                if (score > bestScore) {
+                    bestScore = score
+                    bestMove = i
+                }
+            }
+        }
+        return bestMove
+    }
+
+    private fun minimax(depth: Int, isMax: Boolean, me: Char, enemy: Char): Int {
+        if (checkWinAll(me)) return 10 - depth
+        if (checkWinAll(enemy)) return depth - 10
+        if (board.all { it != ' ' }) return 0
+
+        if (isMax) {
+            var best = Int.MIN_VALUE
+            for (i in board.indices) {
+                if (board[i] == ' ') {
+                    board[i] = me
+                    best = maxOf(best, minimax(depth + 1, false, me, enemy))
+                    board[i] = ' '
+                }
+            }
+            return best
+        } else {
+            var best = Int.MAX_VALUE
+            for (i in board.indices) {
+                if (board[i] == ' ') {
+                    board[i] = enemy
+                    best = minOf(best, minimax(depth + 1, true, me, enemy))
+                    board[i] = ' '
+                }
+            }
+            return best
+        }
     }
 
     private fun makeMove(index: Int, player: Char) {
@@ -190,11 +265,9 @@ class MainActivity : AppCompatActivity() {
         btn.text = player.toString()
         btn.isEnabled = false
 
-        if (player == 'X') {
-            btn.backgroundTintList = android.content.res.ColorStateList.valueOf(0xFF2196F3.toInt())
-        } else {
-            btn.backgroundTintList = android.content.res.ColorStateList.valueOf(0xFF00BCD4.toInt())
-        }
+        btn.backgroundTintList = android.content.res.ColorStateList.valueOf(
+            if (player == 'X') 0xFF2196F3.toInt() else 0xFF00BCD4.toInt()
+        )
 
         val winLine = checkWinLine(player)
         if (winLine != null) {
@@ -202,12 +275,12 @@ class MainActivity : AppCompatActivity() {
             highlightWin(winLine)
             if (player == 'X') xWins++ else oWins++
             updateScores()
-            val winnerName = if (player == 'X') playerXName else playerOName
-            showWinDialog(winnerName)
+            val winner = if (player == 'X') playerXName else playerOName
+            showWinDialog(winner)
             return
         }
 
-        if (isFull()) {
+        if (board.all { it != ' ' }) {
             gameOver = true
             draws++
             updateScores()
@@ -215,40 +288,47 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    private fun checkWin(player: Char): Boolean = checkWinLine(player) != null
+    private fun checkWinAll(player: Char): Boolean = checkWinLine(player) != null
 
     private fun checkWinLine(player: Char): IntArray? {
-        val lines = listOf(
-            intArrayOf(0, 1, 2), intArrayOf(3, 4, 5), intArrayOf(6, 7, 8),
-            intArrayOf(0, 3, 6), intArrayOf(1, 4, 7), intArrayOf(2, 5, 8),
-            intArrayOf(0, 4, 8), intArrayOf(2, 4, 6)
-        )
-        for (line in lines) {
-            if (board[line[0]] == player && board[line[1]] == player && board[line[2]] == player) {
-                return line
+        val lines = mutableListOf<IntArray>()
+        for (r in 0 until boardSize) {
+            for (c in 0..boardSize - winLength) {
+                lines.add(IntArray(winLength) { c + it + r * boardSize })
             }
+        }
+        for (c in 0 until boardSize) {
+            for (r in 0..boardSize - winLength) {
+                lines.add(IntArray(winLength) { c + (r + it) * boardSize })
+            }
+        }
+        for (r in 0..boardSize - winLength) {
+            for (c in 0..boardSize - winLength) {
+                lines.add(IntArray(winLength) { (c + it) + (r + it) * boardSize })
+            }
+        }
+        for (r in 0..boardSize - winLength) {
+            for (c in winLength - 1 until boardSize) {
+                lines.add(IntArray(winLength) { (c - it) + (r + it) * boardSize })
+            }
+        }
+
+        for (line in lines) {
+            if (line.all { board[it] == player }) return line
         }
         return null
     }
 
-    private fun isFull(): Boolean = board.all { it != ' ' }
-
     private fun highlightWin(line: IntArray) {
-        for (i in line) {
-            buttons[i].backgroundTintList = android.content.res.ColorStateList.valueOf(0xFF4CAF50.toInt())
+        line.forEach {
+            buttons[it].backgroundTintList = android.content.res.ColorStateList.valueOf(0xFF4CAF50.toInt())
         }
     }
 
     private fun updateStatus() {
         statusText.text = when {
-            vsComputer -> {
-                val isComputer = (currentPlayer == 'X' && playerXName == "Компьютер") ||
-                                 (currentPlayer == 'O' && playerOName == "Компьютер")
-                if (isComputer) "Ход компьютера..." else "Ход $playerXName"
-            }
-            else -> {
-                if (currentPlayer == 'X') "Ход $playerXName" else "Ход $playerOName"
-            }
+            vsComputer -> if (currentPlayer == 'X') "Ход $playerXName" else "Ход компьютера..."
+            else -> if (currentPlayer == 'X') "Ход $playerXName" else "Ход $playerOName"
         }
     }
 
@@ -273,7 +353,6 @@ class MainActivity : AppCompatActivity() {
             dialog.dismiss()
             startNewGame()
         }
-
         dialog.show()
     }
 }

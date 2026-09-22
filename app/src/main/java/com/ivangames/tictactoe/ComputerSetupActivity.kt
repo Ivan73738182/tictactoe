@@ -17,14 +17,14 @@ class ComputerSetupActivity : AppCompatActivity() {
         val backBtn = findViewById<Button>(R.id.backBtn)
 
         playAsXBtn.setOnClickListener {
-            val intent = Intent(this, EnterNameActivity::class.java).apply {
+            val intent = Intent(this, DifficultyActivity::class.java).apply {
                 putExtra("playerSide", "X")
             }
             startActivity(intent)
         }
 
         playAsOBtn.setOnClickListener {
-            val intent = Intent(this, EnterNameActivity::class.java).apply {
+            val intent = Intent(this, DifficultyActivity::class.java).apply {
                 putExtra("playerSide", "O")
             }
             startActivity(intent)

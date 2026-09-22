@@ -19,21 +19,11 @@
             </intent-filter>
         </activity>
 
-        <activity
-            android:name=".NamesActivity"
-            android:exported="false" />
-
-        <activity
-            android:name=".ComputerSetupActivity"
-            android:exported="false" />
-
-        <activity
-            android:name=".EnterNameActivity"
-            android:exported="false" />
-
-        <activity
-            android:name=".MainActivity"
-            android:exported="false" />
+        <activity android:name=".NamesActivity" android:exported="false" />
+        <activity android:name=".ComputerSetupActivity" android:exported="false" />
+        <activity android:name=".DifficultyActivity" android:exported="false" />
+        <activity android:name=".EnterNameActivity" android:exported="false" />
+        <activity android:name=".MainActivity" android:exported="false" />
 
     </application>
 </manifest>
