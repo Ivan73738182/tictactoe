@@ -5,8 +5,6 @@ import android.content.Context
 import android.content.Intent
 import android.graphics.Color
 import android.os.Bundle
-import android.os.Handler
-import android.os.Looper
 import android.view.LayoutInflater
 import android.view.View
 import android.widget.Button
@@ -111,9 +109,12 @@ class MainActivity : AppCompatActivity() {
                     text = ""
                     textSize = if (boardSize == 3) 48f else 32f
                     setTextColor(Color.WHITE)
-                    backgroundTintList = android.content.res.ColorStateList.valueOf(0xFF2A2A3A.toInt())
-                    layoutParams = LinearLayout.LayoutParams(0, LinearLayout.LayoutParams.MATCH_PARENT, 1f).apply {
-                        setMargins(4, 4, 4, 4)
+                    background = resources.getDrawable(R.drawable.cell_bg, null)
+                    stateListAnimator = null
+                    layoutParams = LinearLayout.LayoutParams(
+                        0, LinearLayout.LayoutParams.MATCH_PARENT, 1f
+                    ).apply {
+                        setMargins(6, 6, 6, 6)
                     }
                     setOnClickListener { onCellClick(idx) }
                 }
@@ -131,10 +132,8 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun applyTheme() {
-        val bg = if (darkTheme) 0xFF121212.toInt() else 0xFFF5F5F5.toInt()
         val textColor = if (darkTheme) Color.WHITE else Color.BLACK
         val subColor = if (darkTheme) 0xFFAAAAAA.toInt() else 0xFF666666.toInt()
-        rootLayout.setBackgroundColor(bg)
         statusText.setTextColor(textColor)
         timerText.setTextColor(subColor)
         themeBtn.text = if (darkTheme) "🌙" else "☀"
@@ -150,6 +149,7 @@ class MainActivity : AppCompatActivity() {
         view.findViewById<LinearLayout>(R.id.modeTwoPlayers).setOnClickListener {
             dialog.dismiss()
             vsComputer = false
+            trainingMode = false
             playerOName = originalPlayerOName
             playerONameView.text = playerOName
             startNewGame()
@@ -184,7 +184,7 @@ class MainActivity : AppCompatActivity() {
         buttons.forEach {
             it.text = ""
             it.isEnabled = true
-            it.backgroundTintList = android.content.res.ColorStateList.valueOf(0xFF2A2A3A.toInt())
+            it.background = resources.getDrawable(R.drawable.cell_bg, null)
         }
         updateStatus()
         updateScores()
@@ -349,9 +349,8 @@ class MainActivity : AppCompatActivity() {
         btn.scaleY = 0.5f
         btn.animate().alpha(1f).scaleX(1f).scaleY(1f).setDuration(200).start()
 
-        btn.backgroundTintList = android.content.res.ColorStateList.valueOf(
-            if (player == 'X') 0xFF2196F3.toInt() else 0xFF00BCD4.toInt()
-        )
+        val tint = if (player == 'X') 0xFF2196F3.toInt() else 0xFF00BCD4.toInt()
+        btn.backgroundTintList = android.content.res.ColorStateList.valueOf(tint)
 
         val winLine = checkWinLine(player)
         if (winLine != null) {
@@ -407,8 +406,9 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun highlightWin(line: IntArray) {
+        val tint = android.content.res.ColorStateList.valueOf(0xFF4CAF50.toInt())
         line.forEach {
-            buttons[it].backgroundTintList = android.content.res.ColorStateList.valueOf(0xFF4CAF50.toInt())
+            buttons[it].backgroundTintList = tint
         }
     }
 
