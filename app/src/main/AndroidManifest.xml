@@ -10,13 +10,18 @@
         android:theme="@style/Theme.TicTacToe">
 
         <activity
-            android:name=".NamesActivity"
-            android:exported="true">
+            android:name=".SplashActivity"
+            android:exported="true"
+            android:theme="@style/Theme.TicTacToe">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
+        <activity
+            android:name=".NamesActivity"
+            android:exported="false" />
 
         <activity
             android:name=".ComputerSetupActivity"
