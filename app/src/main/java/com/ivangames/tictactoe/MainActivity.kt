@@ -294,23 +294,27 @@ private fun startNewGame() {
         return findRandomMove()
     }
 
-    private fun findBestMove(me: Char, enemy: Char): Int {
-        var bestScore = Int.MIN_VALUE
-        var bestMove = -1
-        for (i in board.indices) {
-            if (board[i] == ' ') {
-                board[i] = me
-                val score = minimax(0, false, me, enemy)
-                board[i] = ' '
-                if (score > bestScore) {
-                    bestScore = score
-                    bestMove = i
-                }
-            }
-        }
-        return bestMove
+private fun findBestMove(me: Char, enemy: Char): Int {
+    // Для 4x4 — не используем минимакс (слишком долго), используем средний ИИ
+    if (boardSize >= 4) {
+        return findMediumMove()
     }
 
+    var bestScore = Int.MIN_VALUE
+    var bestMove = -1
+    for (i in board.indices) {
+        if (board[i] == ' ') {
+            board[i] = me
+            val score = minimax(0, false, me, enemy)
+            board[i] = ' '
+            if (score > bestScore) {
+                bestScore = score
+                bestMove = i
+            }
+        }
+    }
+    return bestMove
+}
     private fun minimax(depth: Int, isMax: Boolean, me: Char, enemy: Char): Int {
         if (checkWinAll(me)) return 10 - depth
         if (checkWinAll(enemy)) return depth - 10
