@@ -176,19 +176,20 @@ class MainActivity : AppCompatActivity() {
         dialog.show()
     }
 
-    private fun startNewGame() {
-        board.clear()
-        repeat(boardSize * boardSize) { board.add(' ') }
-        gameOver = false
-        currentPlayer = 'X'
-        buttons.forEach {
-            it.text = ""
-            it.isEnabled = true
-            it.background = resources.getDrawable(R.drawable.cell_bg, null)
-        }
-        updateStatus()
-        updateScores()
-        startTurnTimer()
+private fun startNewGame() {
+    board.clear()
+    repeat(boardSize * boardSize) { board.add(' ') }
+    gameOver = false
+    currentPlayer = 'X'
+    buttons.forEach {
+        it.text = ""
+        it.isEnabled = true
+        it.background = resources.getDrawable(R.drawable.cell_bg, null)
+        it.backgroundTintList = android.content.res.ColorStateList.valueOf(0xFFFFFFFF.toInt())
+    }
+    updateStatus()
+    updateScores()
+    startTurnTimer()
 
         if (vsComputer && currentPlayer == 'O') {
             buttons.forEach { it.isEnabled = false }
