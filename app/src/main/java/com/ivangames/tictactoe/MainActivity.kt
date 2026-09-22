@@ -2,13 +2,20 @@ package com.ivangames.tictactoe
 
 import android.app.AlertDialog
 import android.content.Context
+import android.content.Intent
+import android.graphics.Color
 import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
 import android.view.LayoutInflater
+import android.view.View
 import android.widget.Button
 import android.widget.LinearLayout
 import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import java.util.Timer
+import java.util.TimerTask
 
 class MainActivity : AppCompatActivity() {
 
@@ -29,16 +36,23 @@ class MainActivity : AppCompatActivity() {
     private var oWins = 0
     private var draws = 0
 
+    private var turnTimer: Timer? = null
+    private var secondsLeft = 30
+
     private lateinit var buttons: MutableList<Button>
     private lateinit var statusText: TextView
+    private lateinit var timerText: TextView
     private lateinit var playerXNameView: TextView
     private lateinit var playerONameView: TextView
     private lateinit var playerXScoreView: TextView
     private lateinit var playerOScoreView: TextView
     private lateinit var newGameBtn: Button
     private lateinit var changeModeBtn: Button
+    private lateinit var themeBtn: Button
     private lateinit var boardContainer: LinearLayout
+    private lateinit var rootLayout: LinearLayout
     private lateinit var prefs: android.content.SharedPreferences
+    private var darkTheme = true
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -46,22 +60,26 @@ class MainActivity : AppCompatActivity() {
 
         prefs = getSharedPreferences("tips", Context.MODE_PRIVATE)
 
-        playerXName = intent.getStringExtra("playerX") ?: "Игрок X"
-        playerOName = intent.getStringExtra("playerO") ?: "Игрок O"
+        playerXName = intent.getStringExtra("playerX") ?: prefs.getString("lastX", "Игрок X") ?: "Игрок X"
+        playerOName = intent.getStringExtra("playerO") ?: prefs.getString("lastO", "Игрок O") ?: "Игрок O"
         originalPlayerOName = playerOName
         vsComputer = intent.getBooleanExtra("vsComputer", false)
         difficulty = intent.getStringExtra("difficulty") ?: "medium"
         boardSize = intent.getIntExtra("boardSize", 3)
         winLength = if (boardSize == 3) 3 else 4
+        darkTheme = prefs.getBoolean("darkTheme", true)
 
         playerXNameView = findViewById(R.id.playerXName)
         playerONameView = findViewById(R.id.playerOName)
         playerXScoreView = findViewById(R.id.playerXScore)
         playerOScoreView = findViewById(R.id.playerOScore)
         statusText = findViewById(R.id.statusText)
+        timerText = findViewById(R.id.timerText)
         newGameBtn = findViewById(R.id.newGameBtn)
         changeModeBtn = findViewById(R.id.changeModeBtn)
+        themeBtn = findViewById(R.id.themeBtn)
         boardContainer = findViewById(R.id.boardContainer)
+        rootLayout = findViewById(R.id.rootLayout)
 
         playerXNameView.text = playerXName
         playerONameView.text = playerOName
@@ -70,7 +88,9 @@ class MainActivity : AppCompatActivity() {
 
         newGameBtn.setOnClickListener { startNewGame() }
         changeModeBtn.setOnClickListener { showModeDialog() }
+        themeBtn.setOnClickListener { toggleTheme() }
 
+        applyTheme()
         startNewGame()
     }
 
@@ -90,7 +110,7 @@ class MainActivity : AppCompatActivity() {
                 val btn = Button(this).apply {
                     text = ""
                     textSize = if (boardSize == 3) 48f else 32f
-                    setTextColor(0xFFFFFFFF.toInt())
+                    setTextColor(Color.WHITE)
                     backgroundTintList = android.content.res.ColorStateList.valueOf(0xFF2A2A3A.toInt())
                     layoutParams = LinearLayout.LayoutParams(0, LinearLayout.LayoutParams.MATCH_PARENT, 1f).apply {
                         setMargins(4, 4, 4, 4)
@@ -104,31 +124,56 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
+    private fun toggleTheme() {
+        darkTheme = !darkTheme
+        prefs.edit().putBoolean("darkTheme", darkTheme).apply()
+        applyTheme()
+    }
+
+    private fun applyTheme() {
+        val bg = if (darkTheme) 0xFF121212.toInt() else 0xFFF5F5F5.toInt()
+        val textColor = if (darkTheme) Color.WHITE else Color.BLACK
+        val subColor = if (darkTheme) 0xFFAAAAAA.toInt() else 0xFF666666.toInt()
+        rootLayout.setBackgroundColor(bg)
+        statusText.setTextColor(textColor)
+        timerText.setTextColor(subColor)
+        themeBtn.text = if (darkTheme) "🌙" else "☀"
+    }
+
     private fun showModeDialog() {
-        val options = arrayOf("На двоих", "С компьютером", "Сбросить счёт")
-        AlertDialog.Builder(this)
-            .setTitle("Режим игры")
-            .setItems(options) { _, which ->
-                when (which) {
-                    0 -> {
-                        vsComputer = false
-                        trainingMode = false
-                        playerOName = originalPlayerOName
-                    }
-                    1 -> {
-                        vsComputer = true
-                        playerOName = "Компьютер"
-                    }
-                    2 -> {
-                        xWins = 0
-                        oWins = 0
-                        draws = 0
-                    }
-                }
-                playerONameView.text = playerOName
-                startNewGame()
-            }
-            .show()
+        val view = LayoutInflater.from(this).inflate(R.layout.dialog_mode, null)
+        val dialog = AlertDialog.Builder(this)
+            .setView(view)
+            .setCancelable(true)
+            .create()
+
+        view.findViewById<LinearLayout>(R.id.modeTwoPlayers).setOnClickListener {
+            dialog.dismiss()
+            vsComputer = false
+            playerOName = originalPlayerOName
+            playerONameView.text = playerOName
+            startNewGame()
+        }
+
+        view.findViewById<LinearLayout>(R.id.modeVsComputer).setOnClickListener {
+            dialog.dismiss()
+            val intent = Intent(this, ComputerSetupActivity::class.java)
+            startActivity(intent)
+        }
+
+        view.findViewById<LinearLayout>(R.id.mode4x4).setOnClickListener {
+            dialog.dismiss()
+            boardSize = 4
+            winLength = 4
+            buildBoard()
+            startNewGame()
+        }
+
+        view.findViewById<Button>(R.id.cancelBtn).setOnClickListener {
+            dialog.dismiss()
+        }
+
+        dialog.show()
     }
 
     private fun startNewGame() {
@@ -143,12 +188,49 @@ class MainActivity : AppCompatActivity() {
         }
         updateStatus()
         updateScores()
+        startTurnTimer()
+
+        if (vsComputer && currentPlayer == 'O') {
+            buttons.forEach { it.isEnabled = false }
+            buttons[0].postDelayed({ computerMove() }, 500)
+        }
+    }
+
+    private fun startTurnTimer() {
+        turnTimer?.cancel()
+        secondsLeft = 30
+        timerText.text = "Таймер: $secondsLeft сек"
+        turnTimer = Timer()
+        turnTimer?.scheduleAtFixedRate(object : TimerTask() {
+            override fun run() {
+                runOnUiThread {
+                    secondsLeft--
+                    timerText.text = "Таймер: $secondsLeft сек"
+                    if (secondsLeft <= 0 && !gameOver) {
+                        turnTimer?.cancel()
+                        val free = board.indices.filter { board[it] == ' ' }
+                        if (free.isNotEmpty()) {
+                            makeMove(free.random(), currentPlayer)
+                        }
+                    }
+                }
+            }
+        }, 1000, 1000)
     }
 
     private fun onCellClick(index: Int) {
         if (gameOver) return
         if (board[index] != ' ') return
         if (vsComputer && currentPlayer == 'O') return
+
+        if (trainingMode) {
+            val best = findBestMove('X', 'O')
+            if (index == best) {
+                Toast.makeText(this, "Отличный ход!", Toast.LENGTH_SHORT).show()
+            } else {
+                Toast.makeText(this, "Лучше в клетку ${best + 1}", Toast.LENGTH_LONG).show()
+            }
+        }
 
         makeMove(index, currentPlayer)
 
@@ -162,24 +244,23 @@ class MainActivity : AppCompatActivity() {
         } else {
             currentPlayer = if (currentPlayer == 'X') 'O' else 'X'
             updateStatus()
+            startTurnTimer()
         }
     }
 
     private fun computerMove() {
         if (gameOver) return
-
         val move = when (difficulty) {
             "easy" -> findRandomMove()
             "hard" -> findBestMove('O', 'X')
             else -> findMediumMove()
         }
-
         if (move >= 0) makeMove(move, 'O')
-
         if (!gameOver) {
             currentPlayer = 'X'
             buttons.forEachIndexed { i, b -> b.isEnabled = board[i] == ' ' }
             updateStatus()
+            startTurnTimer()
         }
     }
 
@@ -189,7 +270,6 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun findMediumMove(): Int {
-        // Победный ход
         for (i in board.indices) {
             if (board[i] == ' ') {
                 board[i] = 'O'
@@ -200,7 +280,6 @@ class MainActivity : AppCompatActivity() {
                 board[i] = ' '
             }
         }
-        // Блок
         for (i in board.indices) {
             if (board[i] == ' ') {
                 board[i] = 'X'
@@ -265,6 +344,11 @@ class MainActivity : AppCompatActivity() {
         btn.text = player.toString()
         btn.isEnabled = false
 
+        btn.alpha = 0f
+        btn.scaleX = 0.5f
+        btn.scaleY = 0.5f
+        btn.animate().alpha(1f).scaleX(1f).scaleY(1f).setDuration(200).start()
+
         btn.backgroundTintList = android.content.res.ColorStateList.valueOf(
             if (player == 'X') 0xFF2196F3.toInt() else 0xFF00BCD4.toInt()
         )
@@ -272,9 +356,11 @@ class MainActivity : AppCompatActivity() {
         val winLine = checkWinLine(player)
         if (winLine != null) {
             gameOver = true
+            turnTimer?.cancel()
             highlightWin(winLine)
             if (player == 'X') xWins++ else oWins++
             updateScores()
+            saveNames()
             val winner = if (player == 'X') playerXName else playerOName
             showWinDialog(winner)
             return
@@ -282,6 +368,7 @@ class MainActivity : AppCompatActivity() {
 
         if (board.all { it != ' ' }) {
             gameOver = true
+            turnTimer?.cancel()
             draws++
             updateScores()
             showWinDialog(null)
@@ -337,6 +424,10 @@ class MainActivity : AppCompatActivity() {
         playerOScoreView.text = oWins.toString()
     }
 
+    private fun saveNames() {
+        prefs.edit().putString("lastX", playerXName).putString("lastO", originalPlayerOName).apply()
+    }
+
     private fun showWinDialog(winner: String?) {
         val view = LayoutInflater.from(this).inflate(R.layout.dialog_win, null)
         val winText = view.findViewById<TextView>(R.id.winText)
@@ -354,5 +445,10 @@ class MainActivity : AppCompatActivity() {
             startNewGame()
         }
         dialog.show()
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        turnTimer?.cancel()
     }
 }

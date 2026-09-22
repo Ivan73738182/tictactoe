@@ -7,19 +7,4 @@
         <item name="android:statusBarColor">#121212</item>
         <item name="android:windowBackground">#121212</item>
     </style>
-
-    <style name="CellButton">
-        <item name="android:layout_width">100dp</item>
-        <item name="android:layout_height">100dp</item>
-        <item name="android:layout_margin">4dp</item>
-        <item name="android:textSize">44sp</item>
-        <item name="android:textStyle">bold</item>
-        <item name="android:textColor">#FFFFFF</item>
-        <item name="backgroundTint">#212121</item>
-        <item name="android:insetTop">0dp</item>
-        <item name="android:insetBottom">0dp</item>
-        <item name="android:padding">0dp</item>
-        <item name="android:minWidth">0dp</item>
-        <item name="android:minHeight">0dp</item>
-    </style>
 </resources>

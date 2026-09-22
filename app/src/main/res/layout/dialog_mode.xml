@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:orientation="vertical"
@@ -12,29 +11,28 @@
         android:layout_height="wrap_content"
         android:text="Режим игры"
         android:textColor="#FFFFFF"
-        android:textSize="24sp"
+        android:textSize="22sp"
         android:textStyle="bold"
         android:gravity="center"
-        android:layout_marginBottom="20dp" />
+        android:layout_marginBottom="16dp" />
 
-    <!-- На двоих -->
     <LinearLayout
         android:id="@+id/modeTwoPlayers"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
         android:gravity="center_vertical"
-        android:padding="16dp"
+        android:padding="14dp"
         android:background="#212121"
-        android:layout_marginBottom="12dp"
+        android:layout_marginBottom="10dp"
         android:clickable="true"
         android:focusable="true">
 
         <TextView
-            android:layout_width="60dp"
-            android:layout_height="60dp"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
             android:text="👥"
-            android:textSize="36sp"
+            android:textSize="28sp"
             android:gravity="center" />
 
         <LinearLayout
@@ -49,7 +47,7 @@
                 android:layout_height="wrap_content"
                 android:text="На двоих"
                 android:textColor="#FFFFFF"
-                android:textSize="20sp"
+                android:textSize="18sp"
                 android:textStyle="bold" />
 
             <TextView
@@ -57,28 +55,27 @@
                 android:layout_height="wrap_content"
                 android:text="Играйте по очереди"
                 android:textColor="#AAAAAA"
-                android:textSize="14sp" />
+                android:textSize="13sp" />
         </LinearLayout>
     </LinearLayout>
 
-    <!-- С компьютером -->
     <LinearLayout
         android:id="@+id/modeVsComputer"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
         android:gravity="center_vertical"
-        android:padding="16dp"
+        android:padding="14dp"
         android:background="#212121"
-        android:layout_marginBottom="12dp"
+        android:layout_marginBottom="10dp"
         android:clickable="true"
         android:focusable="true">
 
         <TextView
-            android:layout_width="60dp"
-            android:layout_height="60dp"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
             android:text="🤖"
-            android:textSize="36sp"
+            android:textSize="28sp"
             android:gravity="center" />
 
         <LinearLayout
@@ -93,28 +90,70 @@
                 android:layout_height="wrap_content"
                 android:text="С компьютером"
                 android:textColor="#FFFFFF"
-                android:textSize="20sp"
+                android:textSize="18sp"
                 android:textStyle="bold" />
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Сразись с ИИ"
+                android:text="Выбор сложности"
                 android:textColor="#AAAAAA"
-                android:textSize="14sp" />
+                android:textSize="13sp" />
         </LinearLayout>
     </LinearLayout>
 
-    <!-- Отмена -->
+    <LinearLayout
+        android:id="@+id/mode4x4"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="center_vertical"
+        android:padding="14dp"
+        android:background="#212121"
+        android:layout_marginBottom="10dp"
+        android:clickable="true"
+        android:focusable="true">
+
+        <TextView
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:text="🎯"
+            android:textSize="28sp"
+            android:gravity="center" />
+
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:orientation="vertical"
+            android:layout_marginStart="12dp">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Поле 4×4"
+                android:textColor="#FFFFFF"
+                android:textSize="18sp"
+                android:textStyle="bold" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Собери 4 в ряд"
+                android:textColor="#AAAAAA"
+                android:textSize="13sp" />
+        </LinearLayout>
+    </LinearLayout>
+
     <Button
         android:id="@+id/cancelBtn"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="ОТМЕНА"
-        android:textSize="16sp"
+        android:textSize="15sp"
         android:textStyle="bold"
         android:textColor="#AAAAAA"
         android:backgroundTint="#121212"
-        android:layout_marginTop="8dp" />
+        android:layout_marginTop="6dp" />
 
 </LinearLayout>
