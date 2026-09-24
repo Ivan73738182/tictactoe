@@ -173,4 +173,19 @@
         android:insetBottom="0dp"
         app:cornerRadius="18dp" />
 
+<Button
+    android:id="@+id/trainingBtn"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginTop="12dp"
+    android:text="🎓  ОБУЧЕНИЕ"
+    android:textSize="15sp"
+    android:textStyle="bold"
+    android:textColor="#FFFFFF"
+    android:backgroundTint="#FF9800"
+    android:padding="16dp"
+    android:insetTop="0dp"
+    android:insetBottom="0dp"
+    app:cornerRadius="18dp" />
+
 </LinearLayout>

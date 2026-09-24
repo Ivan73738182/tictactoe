@@ -62,7 +62,8 @@ class MainActivity : AppCompatActivity() {
         playerOName = intent.getStringExtra("playerO") ?: prefs.getString("lastO", "Игрок O") ?: "Игрок O"
         originalPlayerOName = playerOName
         vsComputer = intent.getBooleanExtra("vsComputer", false)
-        difficulty = intent.getStringExtra("difficulty") ?: "medium"
+trainingMode = intent.getBooleanExtra("training", false)   
+     difficulty = intent.getStringExtra("difficulty") ?: "medium"
         boardSize = intent.getIntExtra("boardSize", 3)
         winLength = if (boardSize == 3) 3 else 4
         themeMode = prefs.getString("themeMode", "dark") ?: "dark"

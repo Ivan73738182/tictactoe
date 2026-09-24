@@ -29,6 +29,7 @@ class NamesActivity : AppCompatActivity() {
         val oInput = findViewById<EditText>(R.id.playerOInput)
         val startTwoPlayersBtn = findViewById<Button>(R.id.startTwoPlayersBtn)
         val startComputerBtn = findViewById<Button>(R.id.startComputerBtn)
+val trainingBtn = findViewById<Button>(R.id.trainingBtn)
 
         applyTheme()
 
@@ -58,6 +59,16 @@ themeBtn.setOnClickListener {
             startActivity(intent)
         }
     }
+
+trainingBtn.setOnClickListener {
+    val name = xInput.text.toString().trim()
+    val intent = Intent(this, MainActivity::class.java)
+    intent.putExtra("playerX", name.ifEmpty { "Игрок X" })
+    intent.putExtra("vsComputer", true)
+    intent.putExtra("difficulty", "easy")
+    intent.putExtra("training", true)
+    startActivity(intent)
+}
 
     private fun applyTheme() {
         when (themeMode) {
