@@ -227,7 +227,11 @@ private fun startNewGame() {
     }
     updateStatus()
     updateScores()
+    if (trainingMode) {
+    timerText.text = "💡 Думай спокойно"
+} else {
     startTurnTimer()
+}
 
         if (vsComputer && currentPlayer == 'O') {
             buttons.forEach { it.isEnabled = false }
