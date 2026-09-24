@@ -58,7 +58,6 @@ themeBtn.setOnClickListener {
             }
             startActivity(intent)
         }
-    }
 
 trainingBtn.setOnClickListener {
     val name = xInput.text.toString().trim()
@@ -81,3 +80,5 @@ trainingBtn.setOnClickListener {
                 themeBtn.text = "🌙"
             }
         }
+    }
+}
