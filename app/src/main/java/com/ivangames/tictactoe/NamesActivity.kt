@@ -81,5 +81,3 @@ trainingBtn.setOnClickListener {
                 themeBtn.text = "🌙"
             }
         }
-    }
-}
