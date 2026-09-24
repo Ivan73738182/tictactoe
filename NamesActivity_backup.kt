@@ -29,44 +29,45 @@ class NamesActivity : AppCompatActivity() {
         val oInput = findViewById<EditText>(R.id.playerOInput)
         val startTwoPlayersBtn = findViewById<Button>(R.id.startTwoPlayersBtn)
         val startComputerBtn = findViewById<Button>(R.id.startComputerBtn)
-        val trainingBtn = findViewById<Button>(R.id.trainingBtn)
+val trainingBtn = findViewById<Button>(R.id.trainingBtn)
 
         applyTheme()
 
-        themeBtn.setOnClickListener {
-            themeMode = if (themeMode == "dark") "pink" else "dark"
-            prefs.edit().putString("themeMode", themeMode).apply()
-            applyTheme()
-        }
+themeBtn.setOnClickListener {
+    themeMode = if (themeMode == "dark") "pink" else "dark"
+    prefs.edit().putString("themeMode", themeMode).apply()
+    applyTheme()
+}
 
         startTwoPlayersBtn.setOnClickListener {
-            val nameX = xInput.text.toString().trim()
-            val nameO = oInput.text.toString().trim()
+            val nameX = xInput.text.toString().trim().ifEmpty { "Игрок X" }
+            val nameO = oInput.text.toString().trim().ifEmpty { "Игрок O" }
 
-            val intent = Intent(this, MainActivity::class.java)
-            intent.putExtra("playerX", nameX)
-            intent.putExtra("playerO", nameO)
-            intent.putExtra("vsComputer", false)
+            val intent = Intent(this, MainActivity::class.java).apply {
+                putExtra("playerX", nameX)
+                putExtra("playerO", nameO)
+                putExtra("vsComputer", false)
+            }
             startActivity(intent)
         }
 
         startComputerBtn.setOnClickListener {
-            val name = xInput.text.toString().trim()
-            val intent = Intent(this, ComputerSetupActivity::class.java)
-            intent.putExtra("playerName", name)
+            val name = xInput.text.toString().trim().ifEmpty { "Вы" }
+            val intent = Intent(this, ComputerSetupActivity::class.java).apply {
+                putExtra("playerName", name)
+            }
             startActivity(intent)
         }
 
-        trainingBtn.setOnClickListener {
-            val name = xInput.text.toString().trim()
-            val intent = Intent(this, MainActivity::class.java)
-            intent.putExtra("playerX", name.ifEmpty { "Игрок X" })
-            intent.putExtra("vsComputer", true)
-            intent.putExtra("difficulty", "easy")
-            intent.putExtra("training", true)
-            startActivity(intent)
-        }
-    }
+trainingBtn.setOnClickListener {
+    val name = xInput.text.toString().trim()
+    val intent = Intent(this, MainActivity::class.java)
+    intent.putExtra("playerX", name.ifEmpty { "Игрок X" })
+    intent.putExtra("vsComputer", true)
+    intent.putExtra("difficulty", "easy")
+    intent.putExtra("training", true)
+    startActivity(intent)
+}
 
     private fun applyTheme() {
         when (themeMode) {
