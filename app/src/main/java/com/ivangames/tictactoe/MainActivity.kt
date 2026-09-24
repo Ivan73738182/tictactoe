@@ -183,6 +183,29 @@ view.findViewById<LinearLayout>(R.id.modeTwoPlayers).setOnClickListener {
             startNewGame()
         }
 
+view.findViewById<LinearLayout>(R.id.mode4x4).setOnClickListener {
+    dialog.dismiss()
+    boardSize = 4
+    winLength = 4
+    buildBoard()
+    startNewGame()
+}
+
+view.findViewById<LinearLayout>(R.id.modeTraining).setOnClickListener {
+    dialog.dismiss()
+    boardSize = 3
+    winLength = 3
+    vsComputer = true
+    difficulty = "easy"
+    trainingMode = true
+    buildBoard()
+    startNewGame()
+}
+
+view.findViewById<Button>(R.id.cancelBtn).setOnClickListener {
+    dialog.dismiss()
+}
+
         view.findViewById<Button>(R.id.cancelBtn).setOnClickListener {
             dialog.dismiss()
         }
