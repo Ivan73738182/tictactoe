@@ -452,12 +452,22 @@ private fun findBestMove(me: Char, enemy: Char): Int {
         return null
     }
 
-    private fun highlightWin(line: IntArray) {
-        val tint = android.content.res.ColorStateList.valueOf(0xFF4CAF50.toInt())
-        line.forEach {
-            buttons[it].backgroundTintList = tint
-        }
+private fun highlightWin(line: IntArray) {
+    line.forEach { index ->
+        val btn = buttons[index]
+        val border = android.graphics.drawable.GradientDrawable()
+        border.setColor(0x00000000)
+        border.setStroke(10, 0xFF4CAF50.toInt())
+        border.cornerRadius = 20f
+        btn.background = border
+        btn.animate()
+            .scaleX(1.1f).scaleY(1.1f).setDuration(250)
+            .withEndAction {
+                btn.animate().scaleX(1f).scaleY(1f).setDuration(250).start()
+            }
+            .start()
     }
+}
 
     private fun updateStatus() {
         statusText.text = when {
